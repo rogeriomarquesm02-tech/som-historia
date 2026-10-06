@@ -1,0 +1,45 @@
+name: Gerar APK Som & História
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Preparar ZIP
+        run: |
+          mkdir projeto
+          unzip -o SomHistoria_Prototipo_1_9_sem_pc.zip -d projeto
+
+      - name: Localizar projeto Android
+        run: |
+          find projeto -name gradlew -type f -exec chmod +x {} \;
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Compilar APK
+        working-directory: projeto
+        run: |
+          GRADLEW=$(find . -name gradlew -type f | head -n 1)
+          if [ -z "$GRADLEW" ]; then
+            echo "ERRO: gradlew não encontrado no projeto."
+            exit 1
+          fi
+          DIR=$(dirname "$GRADLEW")
+          cd "$DIR"
+          ./gradlew assembleDebug
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SomHistoria-APK
+          path: projeto/**/build/outputs/apk/**/*.apk
