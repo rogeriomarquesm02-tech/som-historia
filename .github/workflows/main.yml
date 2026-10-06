@@ -14,7 +14,7 @@ jobs:
       - name: Preparar ZIP
         run: |
           mkdir projeto
-          unzip -o SomHistoria_Prototipo_1_9_sem_pc.zip -d projeto
+          unzip -o SomHistoria_Prototipo_1_9_CORRIGIDO-3.zip -d projeto
 
       - name: Localizar projeto Android
         run: |
