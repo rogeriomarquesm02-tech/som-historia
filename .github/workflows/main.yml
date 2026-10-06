@@ -16,10 +16,21 @@ jobs:
           mkdir projeto
           unzip -o SomHistoria_Prototipo_1_9_CORRIGIDO-3.zip -d projeto
 
+      - name: Ativar AndroidX
+        run: |
+          GRADLE_PROPERTIES=$(find projeto -path '*/android/gradle.properties' -type f | head -n 1)
+          if [ -z "$GRADLE_PROPERTIES" ]; then
+            echo "ERRO: gradle.properties não encontrado."
+            exit 1
+          fi
+          echo "android.useAndroidX=true" >> "$GRADLE_PROPERTIES"
+          echo "android.enableJetifier=true" >> "$GRADLE_PROPERTIES"
+          echo "AndroidX ativado em: $GRADLE_PROPERTIES"
+
       - name: Localizar projeto Android
         run: |
           find projeto -name gradlew -type f -exec chmod +x {} \;
-
+      
       - name: Configurar Java
         uses: actions/setup-java@v4
         with:
